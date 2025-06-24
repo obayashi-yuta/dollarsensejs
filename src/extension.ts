@@ -5,7 +5,17 @@ import * as vscode from 'vscode';
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-	
+	const disposable = vscode.commands.registerCommand('dollarsensejs.expandDollar', () => {
+		const editor = vscode.window.activeTextEditor;
+		if (!editor) return;
+
+		const document = editor.document;
+		const position = editor.selection.active;
+
+		// Get text up to the cursor
+		const textUpToCursor = document.getText(new vscode.Range(new vscode.Position(0, 0), position));
+		const backtickCount = (textUpToCursor.match(/`/g) || []).length;
+	})
 }
 
 // This method is called when your extension is deactivated
