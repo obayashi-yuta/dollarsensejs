@@ -5,6 +5,32 @@ import * as vscode from 'vscode';
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+	// Entering '$' in a template literal will display '${}' as a completion candidate
+	const completionProvider = vscode.languages.registerCompletionItemProvider(
+		['javascript', 'typescript'],
+		{
+			provideCompletionItems(document, position) {
+				const lineText = document.lineAt(position).text;
+				const charBefore = lineText[position.character -1];
+
+				const textUpToCursor = document.getText(new vscode.Range(new vscode.Position(0, 0), position));
+				const backtickCount = (textUpToCursor.match(/`/g) || []).length;
+				const insideTemplate = backtickCount % 2 === 1;
+
+				if (charBefore === '$' && insideTemplate) {
+					const item = new vscode.CompletionItem('${}', vscode.CompletionItemKind.Snippet);
+					item.insertText = new vscode.SnippetString('${}$0');
+					item.detail = 'Insert ${}';
+					return [item];
+				}
+				return undefined;
+			}
+		},
+		'$'
+	);
+	context.subscriptions.push(completionProvider);
+
+	// Run the command
 	const disposable = vscode.commands.registerCommand('dollarsensejs.expandDollar', () => {
 		const editor = vscode.window.activeTextEditor;
 		if (!editor) return;
@@ -33,7 +59,6 @@ export function activate(context: vscode.ExtensionContext) {
 			});
 		}
 	});
-
 	context.subscriptions.push(disposable);
 }
 
