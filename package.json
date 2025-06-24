@@ -17,13 +17,6 @@
         "command": "dollarsensejs.expandDollar",
         "title": "Expand $ to ${} in template literals"
       }
-    ],
-    "keybindings": [
-      {
-        "key": "$",
-        "command": "dollarsensejs.expandDollar",
-        "when": "editorTextFocus && editorLangId == javascript || editorLangId == typescript"
-      }
     ]
   },
   "scripts": {
